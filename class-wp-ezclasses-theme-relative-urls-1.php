@@ -1,6 +1,6 @@
 <?php
 /** 
- * Makes your WordPress URLs relative (so WP is harder to find).
+ * Makes your WordPress URLs relative (so WP is harder to find). (@link https://github.com/WPezClasses/class-wp-ezclasses-theme-relative-urls-1)
  *
  * From the Roots Theme framework, as GitHub Gist'ed here: (@link https://gist.github.com/wycks/2315279)
  *
@@ -52,7 +52,7 @@ if (! class_exists('Class_WP_ezClasses_Theme_Relative_URLs_1') ) {
 	}
 		
 	
-    protected function init_defaults(){
+    public function init_defaults(){
 	
 	  $arr_defaults = array(
 	  
@@ -107,7 +107,7 @@ if (! class_exists('Class_WP_ezClasses_Theme_Relative_URLs_1') ) {
 		unset($arr_relative_url_filters['script_loader_src']);
 		unset($arr_relative_url_filters['style_loader_src']);
 		
-		// bang'em out
+		// bang out what remains
 	    foreach ( $arr_relative_url_filters as $str_key => $bool_var ){
 		  if ( $bool_var === true ){
 		     add_filter( $str_key, array($this, 'relative_url') );
@@ -118,9 +118,9 @@ if (! class_exists('Class_WP_ezClasses_Theme_Relative_URLs_1') ) {
 	}
 	
 	
-	public function relative_url($input) {
+	public function relative_url($str_input) {
 	
-	  $output = preg_replace_callback(
+	  $str_output = preg_replace_callback(
 	    '!(https?://[^/|"]+)([^"]+)?!',
 		create_function(
 		  '$matches',
@@ -131,24 +131,25 @@ if (! class_exists('Class_WP_ezClasses_Theme_Relative_URLs_1') ) {
 		  // if domain is not equal to site_url, do not make external link relative
 		  '} else { return $matches[0]; };'
 		),
-	  $input
+	  $str_input
 	  );
-	  return $output;
+	  return $str_output;
 	}
 	
 	/**
 	 * workaround to remove the duplicate subfolder in the src of JS/CSS tags
 	 * example: /subfolder/subfolder/css/style.css
 	 */
-	public function fix_duplicate_subfolder_urls($input) {
-	  $output = $this->relative_url($input);
-	  preg_match_all('!([^/]+)/([^/]+)!', $output, $matches);
-	  if (isset($matches[1]) && isset($matches[2])) {
-	    if ($matches[1][0] === $matches[2][0]) {
-		  $output = substr($output, strlen($matches[1][0]) + 1);
+	public function fix_duplicate_subfolder_urls($str_input) {
+	
+	  $str_output = $this->relative_url($str_input);
+	  preg_match_all('!([^/]+)/([^/]+)!', $str_output, $arr_matches);
+	  if (isset($arr_matches[1]) && isset($arr_matches[2])) {
+	    if ($arr_matches[1][0] === $arr_matches[2][0]) {
+		  $str_output = substr($arr_output, strlen($arr_matches[1][0]) + 1);
 		}
 	  }
-	  return $output;
+	  return $str_output;
 	}
 
     /**
